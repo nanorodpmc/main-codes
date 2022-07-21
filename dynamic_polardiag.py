@@ -110,7 +110,7 @@ def polardiag(val):
 
 def change_fit(val):
     global value
-    value+=1
+    value-=1
     polardiag(val)
 
 def changespectrum(val):
