@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 import time
 from tqdm import tqdm
 
-data = pd.read_csv('C:/Users/morel/OneDrive/Bureau/data/New rhabdo/Nem2 50 mW 2000 ms/Project 2022-05-06/images/Spectrum/pol__Polarizer000_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
+data = pd.read_csv('data rhabdophane/Nem 1/pol__Polarizer000_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
 
 wav=[float(a) for a in list(data)[1:-1]]
 spectra=data.values[:][0][1:-1]
@@ -20,21 +20,21 @@ angles=[]
 print('retrieving data')
 for z in tqdm(range(0,37)) :
                     #    155               135                  135                  115                  115                    85                            165
-    for j in ['Nem1 50 mW 2000 ms','Nem2 50 mW 1000 ms','Nem2 50 mW 2000 ms','Nem3 50 mW 1000 ms','Tactoid2 50 mW 2000 ms','Tactoid3 50 mW 2000 ms','Tactoid4 50 mW 2000 ms']:
-        if j=='Nem1 50 mW 2000 ms': i=(z+7)%36
-        if j=='Nem2 50 mW 1000 ms': i=(z+5)%36
-        if j=='Nem2 50 mW 2000 ms': i=(z+5)%36
-        if j=='Nem3 50 mW 1000 ms': i=(z+3)%36
-        if j=='Tactoid2 50 mW 2000 ms': i=(z+3)%36
-        if j=='Tactoid3 50 mW 2000 ms': i=(z+0)%36
-        if j=='Tactoid4 50 mW 2000 ms': i=(z+8)%36
+    for j in ['Nem 1','Nem 2','Nem 3','Nem 4','Tact 1','Tact 2','Tact 3']:
+        if j=='Nem 1': i=(z+7)%36
+        if j=='Nem 2': i=(z+5)%36
+        if j=='Nem 3': i=(z+5)%36
+        if j=='Nem 4': i=(z+3)%36
+        if j=='Tact 1': i=(z+3)%36
+        if j=='Tact 2': i=(z+0)%36
+        if j=='Tact 3': i=(z+8)%36
 
         a=''
         if i<10: a ='0'
         try :
-            data = pd.read_csv('C:/Users/morel/OneDrive/Bureau/data/New rhabdo/'+j+'/Project 2022-05-06/images/Spectrum/pol__Polarizer0'+a+str(i)+'_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
+            data = pd.read_csv('data rhabdophane/'+j+'/pol__Polarizer0'+a+str(i)+'_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
         except:
-            data = pd.read_csv('C:/Users/morel/OneDrive/Bureau/data/New rhabdo/'+j+'/Project 2022-05-06/images/Spectrum/pol__Polarizer0'+a+str(i)+'_Y-Axis0000_Z-Axis0000.csv',sep=',') # Import data from csv
+            data = pd.read_csv('data rhabdophane/'+j+'/pol__Polarizer0'+a+str(i)+'_Y-Axis0000_Z-Axis0000.csv',sep=',') # Import data from csv
    
         wav=[float(a) for a in list(data)[1:-1]]
         val=list(data.values[:][0])[1:-1]
