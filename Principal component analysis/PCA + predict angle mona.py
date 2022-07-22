@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 
 ###### RETRIEVE DATA
 
-data = pd.read_csv('C:/Users/morel/OneDrive/Bureau/data/20220222/nem monazite EG/10x NA 0.3/images/Spectrum/image_Pos0_Polarizer0_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
+data = pd.read_csv('data/10x NA 0.3/image_Pos0_Polarizer0_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
 
 wav=[float(a) for a in list(data)[1:-1]] # the wavelength vector to plot the principal components
 spectra=data.values[:][0][1:-1] # initiate tab of intensity to use np.vstack
@@ -20,7 +20,7 @@ angles=[]
 for i in range(0,37) :
     print('retrieving '+str(i*10)+'° data')
     for j in ['10x NA 0.3','20x NA 0.75','40x NA 0.6','60x oil NA 1.4','100x NA 0.9']:
-        data = pd.read_csv('C:/Users/morel/OneDrive/Bureau/data/20220222/nem monazite EG/'+j+'/images/Spectrum/image_Pos0_Polarizer'+str(i)+'_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
+        data = pd.read_csv('data/'+j+'/image_Pos0_Polarizer'+str(i)+'_X-Axis0000_Y-Axis0000.csv',sep=',') # Import data from csv
         val=list(data.values[:][0])[1:-1] ; mini=min(val)
         val=[(x-mini) for x in val]
         #val=wiener(val,10) 
