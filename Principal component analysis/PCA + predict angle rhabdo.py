@@ -19,7 +19,6 @@ angles=[]
 
 print('retrieving data')
 for z in tqdm(range(0,37)) :
-                    #    155               135                  135                  115                  115                    85                            165
     for j in ['Nem 1','Nem 2','Nem 3','Nem 4','Tact 1','Tact 2','Tact 3']:
         if j=='Nem 1': i=(z+7)%36
         if j=='Nem 2': i=(z+5)%36
