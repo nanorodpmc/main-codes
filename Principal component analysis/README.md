@@ -1,4 +1,4 @@
-## content of this folder
+## content :
 This folder contains one folder and two codes.
 ### data folder
 the data folder contains the data to run the codes
