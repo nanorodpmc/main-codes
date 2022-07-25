@@ -7,38 +7,42 @@ import matplotlib.pyplot as plt
 from scipy import optimize
 from matplotlib.widgets import Slider,Button
 
-print('select folder')
-prompter = promptlib.Files()
-path = prompter.dir()
+def select_data(val):
+    global data
+    global files
+    print('select folder')
+    prompter = promptlib.Files()
+    path = prompter.dir()
 
-folder=path+'/images/Spectrum/'
+    folder=path+'/images/Spectrum/'
 
-files=[_ for _ in os.listdir(folder) if _.endswith('.csv')]
+    files=[_ for _ in os.listdir(folder) if _.endswith('.csv')]
 
-print('retrieving data')
-data=pd.DataFrame()
-for file in tqdm(files):
-    datum=pd.read_csv(folder+file, header = None).T
-    data['wavelength']=datum[0][1:-1]
-    try :
-        begin='Polarizer' ; end='_'
-    except:
-        try:
-            begin='pol' ; end='.'
+    print('retrieving data : ',path)
+    data=pd.DataFrame()
+    for file in tqdm(files):
+        datum=pd.read_csv(folder+file, header = None).T
+        data['wavelength']=datum[0][1:-1]
+        try :
+            begin='Polarizer' ; end='_'
         except:
-            begin='extraIndex' ; end='_'
-    angle=(file.split(begin))[1].split(end)[0]
-    data[str(int(angle))]=datum[1][1:-1]-min(datum[1][1:-1])
-                           
+            try:
+                begin='pol' ; end='.'
+            except:
+                begin='extraIndex' ; end='_'
+        angle=(file.split(begin))[1].split(end)[0]
+        data[str(int(angle))]=datum[1][1:-1]-min(datum[1][1:-1])
+                            
 
-data=data.reindex(index=data.index[::-1]) 
-data.reset_index(inplace=True, drop=True)
+    data=data.reindex(index=data.index[::-1]) 
+    data.reset_index(inplace=True, drop=True)
 
-data = data[['wavelength']+[str(i) for i in range(len(files))]] #to sort the columns by angle value
+    data = data[['wavelength']+[str(i) for i in range(len(files))]] #to sort the columns by angle value
+
+    data['mean intensity']=data.drop('wavelength', axis=1).mean(axis=1) #remove wavelength to calculate mean intensity
 
 
-data['mean intensity']=data.drop('wavelength', axis=1).mean(axis=1) #remove wavelength to calculate mean intensity
-
+select_data(0)
 
 fig = plt.figure()
 
@@ -115,13 +119,23 @@ def change_fit(val):
 
 def changespectrum(val):
     spectrum.set_ydata(data[str(val)])
-    ax2.set_ylim(ymax=max(data.drop('wavelength', axis=1).max()))
+    ax2.set_ylim(ymin=0,ymax=max(data.drop('wavelength', axis=1).max()))
     fig.canvas.draw_idle()
 
-def resetspectrum(v):
+def resetspectrum(val):
+    global linevalue
     spectrum.set_ydata(data['mean intensity'])
-    ax2.set_ylim(ymax=max(data['mean intensity'])*1.05)
+    linevalue.set_xdata([data['wavelength'][1],data['wavelength'][1]])
+    linevalue.set_xdata([data['wavelength'][point_slider.val],data['wavelength'][point_slider.val]])
+    linevalue.set_ydata([0,max(data.drop('wavelength', axis=1).max())])
+    ax2.set_ylim(ymin=0,ymax=max(data['mean intensity'])*1.05)
     fig.canvas.draw_idle()
+
+def update_data(val):
+    select_data(val)
+    resetspectrum(val)
+    polardiag(val)
+
 
 axpoint = plt.axes([0.091, 0.05, 0.819, 0.04])
 point_slider = Slider(ax=axpoint,label='',
@@ -140,9 +154,11 @@ angle_slider.on_changed(changespectrum)
 meanbutton= Button(plt.axes([0.85, 0.56, 0.04, 0.05]),label='mean', hovercolor='0.975')
 meanbutton.on_clicked(resetspectrum)
 
-fitabcbutton= Button(plt.axes([0.05, 0.8, 0.15, 0.05]),label='change fit', hovercolor='0.975')
-fitabcbutton.on_clicked(change_fit)
+changefitbutton= Button(plt.axes([0.05, 0.75, 0.15, 0.05]),label='change fit', hovercolor='0.975')
+changefitbutton.on_clicked(change_fit)
 
+changedatabutton= Button(plt.axes([0.05, 0.85, 0.15, 0.05]),label='select folder', hovercolor='0.975')
+changedatabutton.on_clicked(update_data)
 
 fig.subplots_adjust(bottom=0.14,top=1,left=0.05,right=0.95)
 plt.show()
