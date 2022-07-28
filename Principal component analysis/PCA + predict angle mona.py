@@ -76,61 +76,36 @@ x=spectra ; y=angles
 
 ###### PRINCIPAL COMPONENT ANALYSIS ON TRAIN SET
 
-accuracy=[] ; n=[] ; meanabsdev=[]
-for number in range(10):
-    tsize=0.2
-    acc=0 ; mad=0
-    for rando in range(1):
-        X_train, X_test, y_train, y_test = train_test_split(x, y, 
-        test_size=0.2, random_state=0)
-    
-        pca = PCA(n_components=2)
-        X_train = pca.fit_transform(X_train)
-        
-        ###### MATCH ANGLES AND COEFFICIENTS IN THE TRAIN SET
-        
-        classifier = RandomForestClassifier(random_state=0)
-        classifier.fit(X_train, y_train)
-        
-        ###### PRINCIPAL COMPONENT ANALYSIS OF TEST SET AND ANGLE PREDICTION
-        
-        X_test = pca.transform(X_test) # tranform and not fit_transform
-        y_pred = classifier.predict(X_test)
-        
-        ###### COMPARING PREDICTED ANGLES AND REAL ANGLES
-        y_test=[abs((a-20)%180) for a in y_test]
-        y_pred=[abs((a-20)%180) for a in y_pred]
-        
-        fig=plt.figure()
-        ax=fig.add_subplot(111)
-        ax.set_aspect('equal')
-        plt.plot([0,180],[0,180],color='black',label='ideal result')
-        plt.plot([0,180],[180,0],color='black')
-        plt.scatter(y_test,y_pred,label='predictions')
-        plt.xlabel('known angle')
-        plt.ylabel('predicted angle')
-        plt.title('monazite angle prediction with 80% train 20% test')
-        plt.legend()
-        plt.show()
-        
-        acc+=accuracy_score(y_test, y_pred)
-        mad+=np.mean([abs(x-y) for (x,y) in zip(y_test,y_pred)])
-    
-    n.append((1-tsize))
-    accuracy.append(acc/100)
-    meanabsdev.append(mad/100)
+X_train, X_test, y_train, y_test = train_test_split(x, y, 
+test_size=0.2, random_state=0)
 
-plt.plot(n,accuracy,lw=3, color='k')
-plt.title('accuracy',fontsize=15)
-plt.xlabel('train set size',fontsize=15)
-plt.ylabel('ratio of perfect predictions',fontsize=15)
-plt.grid()
+pca = PCA(n_components=2)
+X_train = pca.fit_transform(X_train)
+
+###### MATCH ANGLES AND COEFFICIENTS IN THE TRAIN SET
+
+classifier = RandomForestClassifier(random_state=0)
+classifier.fit(X_train, y_train)
+
+###### PRINCIPAL COMPONENT ANALYSIS OF TEST SET AND ANGLE PREDICTION
+
+X_test = pca.transform(X_test) # tranform and not fit_transform
+y_pred = classifier.predict(X_test)
+
+###### COMPARING PREDICTED ANGLES AND REAL ANGLES
+y_test=[abs((a-20)%180) for a in y_test]
+y_pred=[abs((a-20)%180) for a in y_pred]
+
+fig=plt.figure()
+ax=fig.add_subplot(111)
+ax.set_aspect('equal')
+plt.plot([0,180],[0,180],color='black',label='ideal result')
+plt.plot([0,180],[180,0],color='black')
+plt.scatter(y_test,y_pred,label='predictions')
+plt.xlabel('known angle')
+plt.ylabel('predicted angle')
+plt.title('monazite angle prediction with 80% train 20% test')
+plt.legend()
 plt.show()
 
-plt.plot(n,meanabsdev,lw=3, color='k')
-plt.title('mean absolute deviation',fontsize=15)
-plt.xlabel('train set size',fontsize=15)
-plt.ylabel('mean absolute deviation (°)',fontsize=15)
-plt.grid()
-plt.show()
 
